@@ -2,7 +2,7 @@
 -- 「商枢」CommercePivot — MySQL 初始化脚本
 -- 对应架构文档 §6 数据模型 与 §16 MySQL 初始化 SQL
 -- 执行方式：
---   1) 小皮面板 / phpStudy 中直接导入本文件；或
+--   1) 用任意 MySQL 客户端直接导入本文件；或
 --   2) python -m commercepivot.cli migrate   （推荐，幂等）
 -- 字符集：utf8mb4 / utf8mb4_unicode_ci
 -- ============================================================

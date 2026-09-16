@@ -77,7 +77,7 @@
 服务：FastAPI、Uvicorn、SSE
 模型：qwen3.7-flash（百炼 API）、BERT、BGE-M3、BGE-Reranker-v2-m3
 数据库：
-  - MySQL 8（小皮面板/phpStudy 本地服务）
+  - MySQL 8（本地服务）
   - Redis 7（Docker 容器）
   - Milvus Lite（本地文件，内嵌运行）
 向量检索：Milvus Lite 稠密 + 稀疏，BM25 可选
@@ -125,7 +125,7 @@
 - 调用前 Pydantic 校验；失败重试 1 次；记录审计日志。
 
 3.5 数据层
-- MySQL：业务数据与元数据（小皮面板本地服务）。
+- MySQL：业务数据与元数据（本地服务）。
 - Milvus Lite：商品知识、FAQ、平台规则向量，本地文件存储。
 - Redis：会话、缓存、限流、Agent Card 缓存（Docker 容器）。
 
@@ -251,8 +251,8 @@ Redis 键：
 八、部署架构
 ------------------------------------------------------------
 本地开发环境：
-- MySQL：小皮面板（phpStudy）本地服务，端口 3306，用户名 root，密码 root。
-- Redis：Docker 容器，端口 6379，密码 1234。
+- MySQL：本地服务，端口 3306（账号口令按本机配置填写）。
+- Redis：Docker 容器，端口 6379（口令按本机配置填写）。
 - Milvus：改用 Milvus Lite，以本地文件方式内嵌运行，不再启动 Docker 容器。
   数据文件路径：./data/milvus_demo.db
 - 主服务：FastAPI :8000
@@ -262,7 +262,7 @@ Redis 键：
 - 大模型：阿里云百炼 API，API_KEY 存环境变量。
 
 Docker 启动 Redis 示例：
-docker run -d --name commercepivot-redis -p 6379:6379 redis:7-alpine redis-server --requirepass 1234
+docker run -d --name commercepivot-redis -p 6379:6379 redis:7-alpine redis-server --requirepass <your-redis-password>
 
 
 九、配置管理
@@ -471,7 +471,7 @@ uv run python -c "import mcp, a2a_sdk, pydantic, httpx, uvicorn; print('ok')"
 # ============================================================
 # 「商枢」CommercePivot — 电商智能经营分析平台
 # Python 3.12  |  uv 环境
-# MySQL: 小皮面板  |  Redis: Docker  |  Milvus: Lite 本地文件
+# MySQL: 本地服务  |  Redis: Docker  |  Milvus: Lite 本地文件
 # ============================================================
 
 # --- Web 服务与 SSE 流式 ---
@@ -530,7 +530,7 @@ orjson==3.10.7
 # ========== 大模型 API ==========
 API_KEY=your-dashscope-api-key
 
-# ========== MySQL（小皮面板） ==========
+# ========== MySQL ==========
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_USER=root
@@ -547,7 +547,7 @@ REDIS_DB=0
 MILVUS_URI=./data/milvus_demo.db
 
 
-十六、MySQL 初始化 SQL（小皮面板中执行）
+十六、MySQL 初始化 SQL（在本机 MySQL 客户端中执行）
 ------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS commercepivot DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE commercepivot;

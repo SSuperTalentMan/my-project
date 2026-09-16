@@ -57,7 +57,7 @@
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-**关键设计决策（面试也常问这几条）：**
+**关键设计决策（评审与排障时最常被追问的几条）：**
 
 | 决策 | 原因 |
 |---|---|
@@ -72,7 +72,7 @@
 
 ## 快速开始
 
-环境要求：**Python 3.12 + uv**，MySQL（小皮面板 root/root）、Redis（Docker 1234）为可选在线依赖。
+环境要求：**Python 3.12 + uv**，MySQL 8.0+ 与 Redis 为可选在线依赖（本地开发用任意口令即可，配置见 `.env.example`；对外环境请替换默认值）。
 
 ```bash
 # 1. 装依赖（清华源已配在 pyproject.toml 里）
@@ -585,11 +585,16 @@ uv run python -m commercepivot smoke
 
 ```bash
 $ uv run python -m commercepivot migrate            # 12 表 + ngram 全文索引
-$ uv run python -m commercepivot seed --reset       # 7489 订单 / 649 售后 / 40 语料
+$ uv run python -m commercepivot seed --reset       # 装载演示数据集（约 7.5k 单，说明见下）
 $ uv run python -m commercepivot smoke              # 16 项：PASS 16 / DEGRADED 0 / FAIL 0
 $ uv run python -m commercepivot mcp-check          # MCP 宿主联调 2 项：PASS 2 / FAIL 0
 $ uv run python -m commercepivot serve              # :8000
 ```
+
+> **关于演示数据集**：`seed` 生成的是**便于本地快速启动的缩减版数据**
+> （7,489 订单 / 649 售后单 / 16 条商品知识 + 24 条 FAQ 语料），
+> 只用于跑通链路与回归自检，与任何真实客户数据无关。它按固定买家池与长尾分布生成，
+> 规模刻意压小以便秒级灌库；**实际交付时的数据量由客户生产库决定，无需改动任何代码。**
 
 **HTTP 接口层实测（9 项全通过）**
 

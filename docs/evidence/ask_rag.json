@@ -1,0 +1,235 @@
+{
+  "answer": "七天无理由退货的条件是自签收次日起 7 个自然日内，且商品保持完好。\n\n具体而言，“完好”指商品本身、配件、吊牌、赠品、发票及包装完整，无人为损坏、无使用痕迹且未洗涤。但以下商品不支持无理由退货：定制类商品、鲜活易腐（如大闸蟹等生鲜）、已拆封的音像制品与软件、个人护理类已拆封商品（如精华液、面霜）、内衣裤与已拆封床品。",
+  "session_id": "sess-dd15d118e51c44ea",
+  "request_id": "39080228f6724cebafab1728f9a7c29b",
+  "answer_source": "llm",
+  "answer_meta": {
+    "model": "qwen3.7-flash",
+    "usage": {
+      "completion_tokens": 104,
+      "prompt_tokens": 808,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "text_tokens": 808
+      },
+      "total_tokens": 912
+    },
+    "llm_elapsed_ms": 1723,
+    "generator": "llm"
+  },
+  "cached": false,
+  "intent": {
+    "primary": "knowledge_qa",
+    "primary_name": "知识问答",
+    "domain": "知识问答",
+    "confidence": 0.78,
+    "source": "rule",
+    "scores": {
+      "after_sales": 0.3,
+      "knowledge_qa": 0.78
+    },
+    "hits": {
+      "knowledge_qa": [
+        "是什么",
+        "条件"
+      ]
+    },
+    "matched": [
+      "knowledge_qa"
+    ],
+    "agents": [
+      "knowledge_rag_agent"
+    ],
+    "question": "七天无理由退货的条件是什么"
+  },
+  "slots": {
+    "knowledge_query": "七天无理由退货的条件是什么"
+  },
+  "missing_slots": [],
+  "defaults_applied": [],
+  "plan": [
+    {
+      "agent": "knowledge_rag_agent",
+      "intent": "knowledge_qa",
+      "focus": "knowledge",
+      "role": "primary"
+    }
+  ],
+  "plan_reason": "知识问答 → knowledge_rag_agent（政策/规则咨询只检索知识库，不叠加业务数据）",
+  "agent_tasks": [
+    {
+      "id": "knowledge_rag_agent-9bdd2d66d625",
+      "agent": "knowledge_rag_agent",
+      "status": "completed",
+      "elapsed_ms": 7555,
+      "error": null
+    }
+  ],
+  "table": {
+    "title": "knowledge_rag_agent · knowledge",
+    "kind": "knowledge",
+    "columns": [
+      {
+        "key": "score",
+        "label": "score"
+      },
+      {
+        "key": "title",
+        "label": "title"
+      },
+      {
+        "key": "content",
+        "label": "content"
+      },
+      {
+        "key": "collection",
+        "label": "collection"
+      },
+      {
+        "key": "source",
+        "label": "source"
+      },
+      {
+        "key": "keywords",
+        "label": "keywords"
+      },
+      {
+        "key": "retrieval_mode",
+        "label": "retrieval_mode"
+      },
+      {
+        "key": "dense_score",
+        "label": "dense_score"
+      }
+    ],
+    "rows": [
+      {
+        "score": 0.032787,
+        "title": "七天无理由退货的适用条件",
+        "content": "自签收次日起 7 个自然日内，商品保持完好（不影响二次销售）可申请无理由退货。「完好」指：商品本身、配件、吊牌、赠品、发票、包装完整，无人为损坏、无使用痕迹、未洗涤。以下商品不支持无理由退货：定制类商品、鲜活易腐（如大闸蟹等生鲜）、已拆封的音像制品与软件、个人护理类已拆封商品（如精华液、面霜）、内衣裤与已拆封床品。",
+        "collection": "faq_kb",
+        "source": "平台规则",
+        "keywords": "七天无理由,退货条件,完好,例外商品,签收",
+        "retrieval_mode": "milvus-hybrid",
+        "dense_score": null
+      },
+      {
+        "score": 0.032002,
+        "title": "客服话术：如何解释退货率偏高",
+        "content": "面对运营方询问「某商品退货率为何偏高」，标准口径为：先给整体退货率与目标值差距，再拆解该商品退货原因分布（质量问题 / 尺码不合 / 描述不符 / 七天无理由 / 物流破损），最后给出可执行动作（改详情页、加质检、加提示卡、换供应商）。避免只说「正常波动」而不给拆解。",
+        "collection": "faq_kb",
+        "source": "客服 SOP",
+        "keywords": "退货率,话术,拆解,原因分布,运营",
+        "retrieval_mode": "milvus-hybrid",
+        "dense_score": null
+      },
+      {
+        "score": 0.030798,
+        "title": "订单取消规则",
+        "content": "未发货订单可自行取消，款项 1-3 个工作日原路退回。已发货订单不能直接取消，需按退货流程处理。已付款但商家超 15 天未发货的，系统自动取消并退款。已使用优惠券的订单取消后，券在有效期内返还。预售商品在「定金」阶段取消，定金不退（详情页有明确提示的除外）。",
+        "collection": "faq_kb",
+        "source": "平台规则",
+        "keywords": "取消订单,未发货,已发货,定金,退款",
+        "retrieval_mode": "milvus-hybrid",
+        "dense_score": null
+      }
+    ],
+    "row_count": 3,
+    "truncated": false
+  },
+  "findings": [
+    "【七天无理由退货的适用条件】自签收次日起 7 个自然日内，商品保持完好（不影响二次销售）可申请无理由退货。「完好」指：商品本身、配件、吊牌、赠品、发票、包装完整，无人为损坏、无使用痕迹、未洗涤。以下商品不支持无理由退货：定制类商品、鲜活易腐（如大闸蟹等生鲜）、已拆封的音像制品与软件、个人护理类已拆封商品（如精华液、面霜）、内衣裤与已拆封床品。",
+    "【客服话术：如何解释退货率偏高】面对运营方询问「某商品退货率为何偏高」，标准口径为：先给整体退货率与目标值差距，再拆解该商品退货原因分布（质量问题 / 尺码不合 / 描述不符 / 七天无理由 / 物流破损），最后给出可执行动作（改详情页、加质检、加提示卡、换供应商）。避免只说「正常波动」而不给拆解。",
+    "【订单取消规则】未发货订单可自行取消，款项 1-3 个工作日原路退回。已发货订单不能直接取消，需按退货流程处理。已付款但商家超 15 天未发货的，系统自动取消并退款。已使用优惠券的订单取消后，券在有效期内返还。预售商品在「定金」阶段取消，定金不退（详情页有明确提示的除外）。"
+  ],
+  "metrics": {
+    "knowledge_hit_count": 3,
+    "knowledge_retrieval_mode": "milvus-hybrid",
+    "knowledge_top_score": 0.7391
+  },
+  "citations": [
+    {
+      "id": "faq-001",
+      "title": "七天无理由退货的适用条件",
+      "source": "平台规则",
+      "collection": "faq_kb",
+      "score": 0.7391,
+      "retrieval_mode": "milvus-hybrid"
+    },
+    {
+      "id": "faq-023",
+      "title": "客服话术：如何解释退货率偏高",
+      "source": "客服 SOP",
+      "collection": "faq_kb",
+      "score": 0.5402,
+      "retrieval_mode": "milvus-hybrid"
+    },
+    {
+      "id": "faq-017",
+      "title": "订单取消规则",
+      "source": "平台规则",
+      "collection": "faq_kb",
+      "score": 0.3955,
+      "retrieval_mode": "milvus-hybrid"
+    }
+  ],
+  "sources": [
+    {
+      "agent": "knowledge_rag_agent",
+      "kind": "knowledge",
+      "row_count": 3,
+      "source_tools": [
+        "search_knowledge"
+      ],
+      "saved_path": null,
+      "summary": {
+        "query": "七天无理由退货的条件是什么",
+        "top_k": 3,
+        "retrieval_mode": "milvus-hybrid",
+        "degraded": false,
+        "elapsed_ms": 7496,
+        "stages": {
+          "vector_available": true,
+          "embedder": "hashing-fallback",
+          "recall_count": 10,
+          "recall_mode": "milvus-hybrid",
+          "reranker": "lexical-fallback"
+        },
+        "hit_count": 3,
+        "sources": [
+          "平台规则",
+          "客服 SOP"
+        ]
+      }
+    }
+  ],
+  "degraded": false,
+  "degrade_reasons": [],
+  "notes": [
+    "[knowledge_rag_agent] 检索模式：milvus-hybrid"
+  ],
+  "errors": [],
+  "node_timings": {
+    "intent_node": 0,
+    "slot_node": 1,
+    "planning_node": 0,
+    "a2a_route_node": 7557,
+    "aggregate_node": 0,
+    "answer_node": 1723
+  },
+  "elapsed_ms": 9287,
+  "orchestrator_mode": "langgraph",
+  "trace": [
+    {
+      "stage": "llm",
+      "model": "qwen3.7-flash",
+      "elapsed_ms": 1723,
+      "attempt": 1
+    },
+    {
+      "stage": "node",
+      "node": "answer_node",
+      "elapsed_ms": 1723
+    }
+  ]
+}

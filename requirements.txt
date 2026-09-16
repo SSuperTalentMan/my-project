@@ -1,0 +1,65 @@
+# ============================================================
+# 「商枢」CommercePivot — 电商智能经营分析平台
+# Python 3.12  |  uv 环境
+# 版本经 Python 3.12 兼容性验证
+# ============================================================
+
+# --- Web 服务与 SSE 流式 ---
+fastapi==0.115.0
+uvicorn[standard]==0.31.1
+sse-starlette==2.1.0
+python-multipart==0.0.9
+
+# --- LangGraph / LangChain 编排 ---
+langgraph==0.3.0
+langchain==0.3.25
+langchain-core==0.3.58
+langchain-openai==0.3.16
+langgraph-checkpoint==2.0.25
+
+# --- A2A 协议 SDK ---
+a2a-sdk[http-server]==1.1.0
+
+# --- MCP 协议 SDK ---
+mcp[cli]==1.13.1
+
+# --- 数据库客户端 ---
+# pymilvus 2.6.4 起 proto 才有 ShowCollectionsResponse.shards_num；
+# milvus-lite 3.x（纯 Python 重写版）依赖该字段，故两者必须成对升级。
+pymilvus==2.6.17
+# milvus-lite 3.x 提供 py3-none-any wheel（2.x 只有 manylinux/macos），
+# 因此 Windows 上也能用 Milvus Lite。pymilvus 的依赖标记排除了 win32，
+# 这里显式声明，让 Windows 也能装上。
+milvus-lite==3.2.1
+redis[hiredis]==5.1.0
+pymysql==1.1.1
+sqlalchemy==2.0.29
+
+# --- 构建/兼容依赖 ---
+setuptools>=80
+
+# --- 向量与重排模型 ---
+torch==2.4.0
+transformers==4.44.0
+sentence-transformers==3.0.1
+FlagEmbedding==1.2.11
+
+# --- 数据处理 ---
+numpy==1.26.4
+pandas==2.2.3
+
+# --- 参数校验与配置 ---
+pydantic==2.11.4
+pydantic-settings>=2.5.2
+python-dotenv==1.0.1
+
+# --- HTTP 客户端 ---
+httpx==0.28.1
+requests==2.32.3
+
+# --- 日志与可观测 ---
+structlog==24.4.0
+
+# --- 工具 ---
+tenacity==8.5.0
+orjson==3.10.7

@@ -1,0 +1,98 @@
+# ============================================================
+# 「商枢」CommercePivot — 本地开发编排
+#   docker compose up -d                  仅启动 Redis（架构文档 §8 的默认形态）
+#   docker compose --profile milvus up -d  额外启动 Milvus Standalone（可选）
+# 注意：向量库默认走 Milvus Lite 本地内嵌（纯 Python，三平台通用），
+#       无需容器；只有需要多进程共享或大数据量时才起下面的 Standalone。
+# ============================================================
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: commercepivot-redis
+    command: ["redis-server", "--requirepass", "1234", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "1234", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # ------------------------------------------------------------
+  # Milvus Standalone（可选，默认不需要）
+  # 项目默认使用 Milvus Lite 本地内嵌（MILVUS_URI 指向 .db 路径），
+  # 三个平台都能跑，无需任何容器。这里保留 Standalone 作为备选：
+  # 需要多进程/多机共享同一份向量数据、或数据量超出 Lite 适用范围时，
+  # 起这套容器并把 MILVUS_URI 设为 http://localhost:19530 即可。
+  # ------------------------------------------------------------
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: commercepivot-etcd
+    profiles: ["milvus"]
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    command: >
+      etcd -advertise-client-urls=http://127.0.0.1:2379
+           -listen-client-urls=http://0.0.0.0:2379
+           --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - etcd_data:/etcd
+
+  minio:
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    container_name: commercepivot-minio
+    profiles: ["milvus"]
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - minio_data:/minio_data
+
+  milvus:
+    image: milvusdb/milvus:v2.4.4
+    container_name: commercepivot-milvus
+    profiles: ["milvus"]
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - milvus_data:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - etcd
+      - minio
+
+volumes:
+  redis_data:
+  etcd_data:
+  minio_data:
+  milvus_data:

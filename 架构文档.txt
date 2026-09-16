@@ -1,0 +1,656 @@
+============================================================
+「商枢」CommercePivot
+电商智能经营分析与客服助手平台
+架构文档
+版本：V1.2
+日期：2026-09-12
+============================================================
+
+项目名称：商枢（CommercePivot）
+名称含义：Commerce + Pivot（枢纽），寓意本平台是电商经营的智能枢纽，
+主控 Agent 像中枢一样调度各专职 Agent，完成经营分析、客服问答与报表生成。
+
+
+一、总体架构
+------------------------------------------------------------
+采用分层架构，自下而上分为：
+
+用户 / 前端 / 外部 Agent
+        |
+        v
++-------------------------------+
+| 接入层                        |
+| FastAPI + JWT + Redis 限流    |
+| SSE 流式输出 + X-Request-ID   |
++-------------------------------+
+        |
+        v
++-------------------------------+
+| 编排层                        |
+| LangGraph 主控 Agent          |
+| 意图识别、槽位填充、规划       |
+| A2A 路由、结果聚合             |
++-------------------------------+
+        |
+        v
++-------------------------------+
+| A2A Agent 层                  |
+| 订单分析 Agent                |
+| 商品分析 Agent                |
+| 售后客服 Agent                |
+| 知识库 RAG Agent              |
+| 报表生成 Agent                |
++-------------------------------+
+        |
+        v
++-------------------------------+
+| MCP 工具层                    |
+| MCP Server (FastAPI)          |
+| tools/list + tools/call       |
+| 参数校验、超时、审计           |
++-------------------------------+
+        |
+        v
++-------------------------------+
+| 数据层                        |
+| MySQL：订单、商品、售后、审计  |
+| Milvus Lite：商品知识、FAQ 向量 |
+| Redis：会话、缓存、限流        |
++-------------------------------+
+        |
+        v
++-------------------------------+
+| 模型层                        |
+| 阿里云百炼 qwen3.7-flash      |
+| BERT：意图分类                |
+| BGE-M3：稠密+稀疏向量         |
+| BGE-Reranker-v2-m3：精排      |
++-------------------------------+
+
+
+二、技术栈
+------------------------------------------------------------
+语言：Python 3.12
+包管理：uv
+编排：LangGraph、LangChain
+协议：A2A、MCP
+服务：FastAPI、Uvicorn、SSE
+模型：qwen3.7-flash（百炼 API）、BERT、BGE-M3、BGE-Reranker-v2-m3
+数据库：
+  - MySQL 8（小皮面板/phpStudy 本地服务）
+  - Redis 7（Docker 容器）
+  - Milvus Lite（本地文件，内嵌运行）
+向量检索：Milvus Lite 稠密 + 稀疏，BM25 可选
+部署：本地进程 + Docker（仅 Redis）
+可观测：Prometheus、结构化日志、X-Request-ID
+
+
+三、模块设计
+------------------------------------------------------------
+3.1 接入层
+- 路由：/api/v1/chat/ask、/api/v1/chat/ask_stream、/api/v1/mcp、/api/v1/a2a
+- 鉴权：简单 JWT，角色分为 admin / operator / customer
+- 限流：Redis 固定窗口，按 IP + 接口维度
+- 缓存：Redis 缓存高频问答，key 带 role 与 skill
+- 请求关联：X-Request-ID 贯穿全链路
+
+3.2 编排层
+- 主控 Agent 使用 LangGraph 构建。
+- 节点包括：
+  * intent_node：BERT 意图分类 + 规则兜底
+  * slot_node：槽位抽取与缺失追问
+  * planning_node：判断需要调用哪些 A2A Agent
+  * a2a_route_node：并行调用子 Agent
+  * aggregate_node：聚合结果
+  * answer_node：调用 LLM 生成最终回答
+- 条件边：根据意图走不同 Agent；失败回退固定规则。
+
+3.3 A2A Agent 层
+- 每个 Agent 独立进程或模块，暴露 Agent Card。
+- Agent Card 路径：/.well-known/agent-card.json
+- 支持 JSON-RPC 2.0 调用。
+- 子 Agent 清单：
+  * 订单分析 Agent：订单、退款、发货、地区统计
+  * 商品分析 Agent：商品、库存、销量、评论
+  * 售后客服 Agent：售后单、FAQ、工单
+  * 知识库 RAG Agent：商品知识、平台规则
+  * 报表生成 Agent：汇总、导出、模板
+
+3.4 MCP 工具层
+- MCP Server 用 FastAPI 实现，支持 stdio 与 SSE。
+- 接口：
+  * GET  /mcp/tools/list
+  * POST /mcp/tools/call
+- 工具注册表包含：名称、描述、参数 schema、超时、是否只读。
+- 调用前 Pydantic 校验；失败重试 1 次；记录审计日志。
+
+3.5 数据层
+- MySQL：业务数据与元数据（小皮面板本地服务）。
+- Milvus Lite：商品知识、FAQ、平台规则向量，本地文件存储。
+- Redis：会话、缓存、限流、Agent Card 缓存（Docker 容器）。
+
+3.6 模型层
+- qwen3.7-flash：通过 os.getenv("API_KEY") 调用百炼。
+- BERT：意图分类，置信度低时回退规则。
+- BGE-M3：文档与 query 向量化，稠密 + 稀疏。
+- BGE-Reranker-v2-m3：对召回结果精排。
+
+
+四、A2A 协议设计
+------------------------------------------------------------
+4.1 Agent Card
+{
+  "name": "order_analysis_agent",
+  "description": "订单与售后数据分析",
+  "version": "1.0",
+  "skills": ["order_query", "refund_analysis", "sales_stats"],
+  "endpoint": "http://localhost:8002/a2a",
+  "input_schema": {...},
+  "output_schema": {...}
+}
+
+4.2 JSON-RPC 方法
+- tasks/send：提交任务
+- tasks/get：查询任务状态
+- tasks/cancel：取消任务
+
+4.3 任务状态
+- submitted
+- working
+- completed
+- failed
+- canceled
+
+
+五、MCP 工具设计
+------------------------------------------------------------
+工具清单：
+1. query_orders
+   描述：按时间、平台、状态查询订单
+   输入：start_date, end_date, platform, status
+   输出：订单列表与汇总
+
+2. query_products
+   描述：查询商品信息、价格、库存
+   输入：keyword, category, platform
+   输出：商品列表
+
+3. query_after_sales
+   描述：查询售后单与退款进度
+   输入：order_id, status, start_date, end_date
+   输出：售后列表
+
+4. query_inventory
+   描述：查询库存与周转
+   输入：sku, warehouse
+   输出：库存数量与预警
+
+5. query_ad_reports
+   描述：查询广告投放与 ROI
+   输入：platform, start_date, end_date
+   输出：广告报表
+
+6. search_knowledge
+   描述：检索商品知识、FAQ、平台规则
+   输入：query, top_k
+   输出：片段与来源
+
+7. generate_report
+   描述：生成 Markdown 或 CSV 报表
+   输入：report_type, params
+   输出：文件路径或内容
+
+8. create_ticket
+   描述：创建人工工单
+   输入：summary, priority, contact
+   输出：ticket_id
+
+
+六、数据模型
+------------------------------------------------------------
+MySQL 表：
+- products：商品ID、名称、类目、价格、平台
+- orders：订单ID、用户ID、商品ID、金额、状态、时间、平台
+- order_items：订单明细
+- after_sales：售后ID、订单ID、类型、状态、退款金额
+- inventory：SKU、仓库、库存、安全库存
+- ad_reports：平台、日期、曝光、点击、花费、成交额
+- chat_sessions：会话ID、用户ID、角色、创建时间
+- chat_messages：消息ID、会话ID、角色、内容、时间
+- mcp_audit：调用ID、工具名、参数、结果、耗时、状态
+- agent_tasks：任务ID、Agent名、状态、输入、输出、耗时
+
+Milvus Lite 集合：
+- product_kb：商品知识、卖点、使用方法
+- faq_kb：客服 FAQ、平台规则
+字段：id、text、dense_vector、sparse_vector、metadata
+
+Redis 键：
+- session:{session_id}：会话上下文
+- cache:ask:{skill}:{role}:{hash}：问答缓存
+- rate_limit:{ip}:{path}：限流计数
+- agent_card:{name}：Agent Card 缓存
+
+
+七、核心流程
+------------------------------------------------------------
+示例：用户问“上个月抖店退货率最高的商品是什么？”
+
+1. 接入层：鉴权、限流、缓存检查、会话落库。
+2. 主控 Agent：
+   - 意图识别：经营分析 -> 售后分析
+   - 槽位抽取：平台=抖店，时间=上个月，指标=退货率，排序=最高
+3. A2A 路由：调用 order_analysis_agent。
+4. 子 Agent：通过 MCP 调用 query_after_sales 与 query_orders。
+5. MCP Server：参数校验，查询 MySQL，返回结构化数据。
+6. 子 Agent：计算退货率，排序，返回 TopN。
+7. 聚合 Agent：合并结果，调用 qwen3.7-flash 生成自然语言回答。
+8. 接入层：返回答案 + 表格 + 来源，写入缓存。
+
+
+八、部署架构
+------------------------------------------------------------
+本地开发环境：
+- MySQL：小皮面板（phpStudy）本地服务，端口 3306，用户名 root，密码 root。
+- Redis：Docker 容器，端口 6379，密码 1234。
+- Milvus：改用 Milvus Lite，以本地文件方式内嵌运行，不再启动 Docker 容器。
+  数据文件路径：./data/milvus_demo.db
+- 主服务：FastAPI :8000
+- MCP Server：FastAPI :8001
+- A2A Agent：可内嵌主服务，也可独立端口 :8002-8005
+- 模型：BERT、BGE-M3、Reranker 本地加载，CPU 或小 GPU。
+- 大模型：阿里云百炼 API，API_KEY 存环境变量。
+
+Docker 启动 Redis 示例：
+docker run -d --name commercepivot-redis -p 6379:6379 redis:7-alpine redis-server --requirepass 1234
+
+
+九、配置管理
+------------------------------------------------------------
+所有敏感配置通过环境变量读取，项目根目录提供 .env.example 模板。
+实际运行时使用 .env 文件，已被 .gitignore 忽略。
+
+关键环境变量：
+API_KEY=your-dashscope-api-key
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=root
+MYSQL_DB=commercepivot
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=1234
+REDIS_DB=0
+
+MILVUS_URI=./data/milvus_demo.db
+
+
+十、代码连接方式
+------------------------------------------------------------
+# MySQL
+import pymysql
+conn = pymysql.connect(
+    host=os.getenv("MYSQL_HOST", "localhost"),
+    port=int(os.getenv("MYSQL_PORT", 3306)),
+    user=os.getenv("MYSQL_USER", "root"),
+    password=os.getenv("MYSQL_PASSWORD", "root"),
+    database=os.getenv("MYSQL_DB", "commercepivot"),
+    charset="utf8mb4"
+)
+
+# Redis
+import redis
+r = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    password=os.getenv("REDIS_PASSWORD", "1234"),
+    db=int(os.getenv("REDIS_DB", 0)),
+    decode_responses=True
+)
+
+# Milvus Lite
+from pymilvus import MilvusClient
+client = MilvusClient(os.getenv("MILVUS_URI", "./data/milvus_demo.db"))
+
+
+十一、降级与异常
+------------------------------------------------------------
+- Redis 不可用：限流 fail-open，缓存 miss 走全链路。
+- Milvus Lite 不可用：RAG 降级为 MySQL LIKE 或 BM25。
+- LLM 失败：返回检索首条结果或结构化错误。
+- A2A 子 Agent 超时：熔断，返回部分结果。
+- MCP 工具失败：重试 1 次，仍失败返回错误码。
+- 写操作未开启：直接拒绝，保证默认只读。
+
+
+十二、可观测性
+------------------------------------------------------------
+- X-Request-ID 贯穿请求。
+- trace 记录：route -> A2A -> MCP -> LLM。
+- Prometheus 指标：请求量、延迟、错误率、工具调用次数。
+- 审计日志：logs/mcp_audit.jsonl，字段脱敏。
+- 会话日志：MySQL chat_messages。
+
+
+十三、目录结构
+------------------------------------------------------------
+commercepivot/
+  app/
+    main.py
+    api/
+      chat.py
+      mcp.py
+      a2a.py
+    core/
+      config.py
+      security.py
+      logging.py
+    orchestrator/
+      graph.py
+      nodes.py
+      state.py
+    agents/
+      order_agent.py
+      product_agent.py
+      after_sales_agent.py
+      rag_agent.py
+      report_agent.py
+    mcp_server/
+      server.py
+      registry.py
+      tools/
+        order_tools.py
+        product_tools.py
+        knowledge_tools.py
+    retrieval/
+      embedder.py
+      reranker.py
+      milvus_client.py
+    models/
+      intent_bert.py
+      llm_client.py
+    db/
+      mysql.py
+      redis.py
+      models.py
+  data/
+    init_mysql.sql
+    sample_products.csv
+    sample_orders.csv
+    milvus_demo.db
+  docker-compose.yml
+  requirements.txt
+  .env.example
+  README.md
+
+
+十四、数据集来源
+------------------------------------------------------------
+14.1 可直接下载的公开数据集（首选）
+
+① Olist 巴西电商数据集（最推荐，10万订单）
+   Kaggle：https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+   GitHub 镜像：https://github.com/gautamnakum40/Business-Analytics-SQL-PowerBI
+   内容：订单、商品、支付、评论、卖家、地理位置、运费等 9 个 CSV。
+   优点：结构完整、字段丰富、可直接导入 MySQL，适合做问数 Agent。
+
+② Shopee 数据集
+   HuggingFace：https://huggingface.co/datasets/MichaelAndreasTjendra/shopee-dataset
+   GitHub：https://github.com/rebrowser/shopee-dataset
+   Kaggle：https://www.kaggle.com/datasets/rebrowser/shopee-dataset
+
+③ 阿里云天池电商用户行为数据集
+   地址：https://tianchi.aliyun.com/dataset（搜索“电商用户行为”）
+   内容：1000 条中文电商交易记录，含用户 ID、中文姓名、商品类目。
+   优点：中文数据，适合 BERT 意图分类训练。
+
+④ E-Commerce Sales Data（GitHub）
+   地址：https://github.com/pratshrestha/target_sales_analysis
+   内容：customers、orders、order_items、payments、products、reviews 等 8 个 CSV。
+
+14.2 MCP 工具直接爬取（实时数据）
+
+① mcp-cn-commerce（国内首个电商经营 MCP Server 套件）
+   GitHub：https://github.com/TonyWang-hub/mcp-cn-commerce
+   覆盖：抖店、京东、淘宝、拼多多、巨量引擎等平台，提供 147 个工具。
+
+② 淘宝天猫采集器 MCP Server（Apify）
+   地址：https://apify.com/sian.agency/taobao-tmall-product-scraper/api/mcp
+   可采集：商品详情、关键词搜索、店铺目录、买家评论与问答。
+
+③ eshop-mcp（淘宝/天猫数据提取）
+   GitHub：https://github.com/hrz394943230/eshop-data-extract-mcp
+   覆盖消费者视角和商家视角数据。
+
+14.3 Agent 自动生成（兜底方案）
+
+如果以上数据集不够用，可用 LLM 生成 Mock 数据。Prompt 模板：
+“请生成 50 条电商订单数据，字段包括：order_id, user_id, product_name,
+category, price, quantity, total_amount, platform(抖店/京东/淘宝),
+status(已付款/已发货/已完成/已退款), order_date, region。
+以 CSV 格式输出，日期范围 2025-01 至 2025-12。”
+
+建议：优先使用 Olist 数据集作为主数据源，结构完整且可直接导入 MySQL，
+然后搭配 mcp-cn-commerce 工具做实时数据补充。
+
+
+十五、环境创建与依赖安装
+------------------------------------------------------------
+15.1 环境创建命令（uv + Python 3.12）
+
+# 1. 安装 uv（如果尚未安装）
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Windows: powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# 2. 创建项目目录并初始化
+mkdir commercepivot && cd commercepivot
+uv init --python 3.12
+
+# 3. 创建虚拟环境
+uv venv --python 3.12
+# 输出：Using CPython 3.12.x
+#       Creating virtual environment at: .venv
+
+# 4. 激活虚拟环境
+source .venv/bin/activate        # Linux / macOS
+# .venv\Scripts\activate         # Windows
+
+# 5. 先安装 torch（CPU 版）
+uv add torch==2.4.0 --index-url https://download.pytorch.org/whl/cpu
+
+# 6. 再安装其余依赖
+uv add -r requirements.txt
+
+# 7. 验证环境
+uv run python -c "import sys; print(sys.version)"
+uv run python -c "import mcp, a2a_sdk, pydantic, httpx, uvicorn; print('ok')"
+
+15.2 requirements.txt
+
+# ============================================================
+# 「商枢」CommercePivot — 电商智能经营分析平台
+# Python 3.12  |  uv 环境
+# MySQL: 小皮面板  |  Redis: Docker  |  Milvus: Lite 本地文件
+# ============================================================
+
+# --- Web 服务与 SSE 流式 ---
+fastapi==0.115.0
+uvicorn[standard]==0.31.1
+sse-starlette==2.1.0
+python-multipart==0.0.9
+
+# --- LangGraph / LangChain 编排 ---
+langgraph==0.3.0
+langchain==0.3.25
+langchain-core==0.3.25
+langchain-openai==0.3.16
+langgraph-checkpoint==2.0.25
+
+# --- A2A 协议 SDK ---
+a2a-sdk[http-server]==1.1.0
+
+# --- MCP 协议 SDK ---
+mcp[cli]==1.13.1
+
+# --- 数据库客户端 ---
+pymilvus==2.5.0          # 自带 Milvus Lite
+redis[hiredis]==5.1.0
+pymysql==1.1.1
+sqlalchemy==2.0.29
+
+# --- 向量与重排模型 ---
+# torch 请用 uv add torch==2.4.0 --index-url https://download.pytorch.org/whl/cpu 安装
+transformers==4.44.0
+sentence-transformers==3.0.1
+FlagEmbedding==1.2.11
+
+# --- 数据处理 ---
+numpy==1.26.4
+pandas==2.2.3
+
+# --- 参数校验与配置 ---
+pydantic==2.11.4
+pydantic-settings==2.4.0
+python-dotenv==1.0.1
+
+# --- HTTP 客户端 ---
+httpx==0.28.1
+requests==2.32.3
+
+# --- 日志与可观测 ---
+structlog==24.4.0
+
+# --- 工具 ---
+tenacity==8.5.0
+orjson==3.10.7
+
+15.3 .env.example
+
+# ========== 大模型 API ==========
+API_KEY=your-dashscope-api-key
+
+# ========== MySQL（小皮面板） ==========
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=root
+MYSQL_DB=commercepivot
+
+# ========== Redis（Docker） ==========
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=1234
+REDIS_DB=0
+
+# ========== Milvus Lite（本地文件） ==========
+MILVUS_URI=./data/milvus_demo.db
+
+
+十六、MySQL 初始化 SQL（小皮面板中执行）
+------------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS commercepivot DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE commercepivot;
+
+-- 商品表
+CREATE TABLE products (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(100),
+  price DECIMAL(10,2),
+  platform VARCHAR(50),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 订单表
+CREATE TABLE orders (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  order_no VARCHAR(64) UNIQUE NOT NULL,
+  user_id VARCHAR(64),
+  product_id INT,
+  amount DECIMAL(10,2),
+  status VARCHAR(32),
+  platform VARCHAR(50),
+  order_date DATETIME,
+  region VARCHAR(100),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-- 售后表
+CREATE TABLE after_sales (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT,
+  type VARCHAR(50),
+  status VARCHAR(32),
+  refund_amount DECIMAL(10,2),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);
+
+-- 库存表
+CREATE TABLE inventory (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  sku VARCHAR(64) UNIQUE NOT NULL,
+  product_id INT,
+  warehouse VARCHAR(100),
+  quantity INT DEFAULT 0,
+  safety_stock INT DEFAULT 10,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-- 广告报表
+CREATE TABLE ad_reports (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  platform VARCHAR(50),
+  report_date DATE,
+  impressions INT,
+  clicks INT,
+  cost DECIMAL(10,2),
+  revenue DECIMAL(10,2)
+);
+
+-- 会话表
+CREATE TABLE chat_sessions (
+  id VARCHAR(64) PRIMARY KEY,
+  user_id VARCHAR(64),
+  role VARCHAR(32),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 消息表
+CREATE TABLE chat_messages (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  session_id VARCHAR(64),
+  role VARCHAR(32),
+  content TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (session_id) REFERENCES chat_sessions(id)
+);
+
+-- MCP 审计表
+CREATE TABLE mcp_audit (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  tool_name VARCHAR(100),
+  params TEXT,
+  result TEXT,
+  elapsed_ms INT,
+  status VARCHAR(32),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Agent 任务表
+CREATE TABLE agent_tasks (
+  id VARCHAR(64) PRIMARY KEY,
+  agent_name VARCHAR(100),
+  status VARCHAR(32),
+  input TEXT,
+  output TEXT,
+  elapsed_ms INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+============================================================
+文档结束
+============================================================

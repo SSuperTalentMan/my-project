@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="IvXiwdDmIlyTtF6FkTrH8A"><head data-page-node-id="I2RSfD6gto04rTHwntAPWw"><meta charset="utf-8" data-page-node-id="4PXrVlxS9nEnTsB1ogVLJq">
+<title>商枢 CommercePivot 全链路流程图</title>
+<style>
+  body { margin:0; padding:24px; background:#FBFAF7;
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1760px; margin:0 auto; background:#fff; border-radius:14px;
+           padding:8px 12px 4px; border:1px solid #E5E2DA; }
+</style></head>
+<body data-page-node-id="DU1Ej4bPnCr97KYdSEWGMA"><div class="wrap" data-page-node-id="BwthSa0GL9AE6WDw5ekDRZ">
+<svg viewBox="0 0 1700 910" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Microsoft YaHei,sans-serif" data-page-node-id="MXUpYTdDgrdGcEAWWF75Zl">
+<defs data-page-node-id="0qDKyZOY07foHtb9apXQZ0"><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse" data-page-node-id="OF7sO3YMRB61tUSCV4C3Sg"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="85rxTPMmQtOBVDlCEeo5tg"/></marker></defs>
+<text x="30" y="34" font-size="19" fill="#2C2C2A" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="IAlkIig4pQEK5CrR2PMhrR">商枢 CommercePivot · 一次经营问句的完整链路</text>
+<text x="30" y="62" font-size="12.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="Lk9Slk933oJ29Xi3uPLQOE">示例问句：「上个月抖店退货率最高的商品是什么？」—— 从用户输入到最终回答，逐步走完全流程</text>
+<rect x="1120" y="30" width="11" height="11" rx="2.5" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="OcMypPBrt0SkwoocW2t8T4"/>
+<text x="1136" y="36" font-size="11.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="wWg0ChMFNVwPD4zgALEvQx">编排 / 接入</text>
+<rect x="1232" y="30" width="11" height="11" rx="2.5" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="PJsEbLojAQWzO03wQwUqPn"/>
+<text x="1248" y="36" font-size="11.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="5DhqKXGQKTGoutC0Z4ohMT">A2A Agent</text>
+<rect x="1344" y="30" width="11" height="11" rx="2.5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5" data-page-node-id="MdOXQCkp1kRD0rauKejHK9"/>
+<text x="1360" y="36" font-size="11.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="5sZQ7PCjxSZvhyaDl65iNX">MCP 工具</text>
+<rect x="1456" y="30" width="11" height="11" rx="2.5" fill="#EAF3DE" stroke="#639922" stroke-width="0.5" data-page-node-id="ojDq49CwNjQikR01YdNkPB"/>
+<text x="1472" y="36" font-size="11.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="242p1CLRDiZkOgBJkmi8xV">LLM 调用</text>
+<rect x="1568" y="30" width="11" height="11" rx="2.5" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" data-page-node-id="iUGDsO7ngm00dhANKuIkBz"/>
+<text x="1584" y="36" font-size="11.5" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="wgXGTdaslv7KobK343W598">判断 / 说明</text>
+<text x="30" y="96" font-size="13" fill="#2C2C2A" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="OyGWXCtr9CNq6PDwgPEVoJ">① 用户入口</text>
+<rect x="30" y="108" width="34" height="2.5" rx="1.25" fill="#888780" data-page-node-id="UXIuRWhUDEARTybFMNzT78"/>
+<text x="210" y="96" font-size="13" fill="#0C447C" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="9T3FvSDucfwo8aSOHmldgH">② 接入层</text>
+<rect x="210" y="108" width="34" height="2.5" rx="1.25" fill="#185FA5" data-page-node-id="T3DLaIBPXTe3vMU4jEcBFY"/>
+<text x="410" y="96" font-size="13" fill="#0C447C" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="KtxJ6y3Qp7BdFPuBCI6JJe">③ 编排层 · 理解</text>
+<rect x="410" y="108" width="34" height="2.5" rx="1.25" fill="#185FA5" data-page-node-id="3C7G2sTrqYXFU4fTZ3c8Cc"/>
+<text x="650" y="96" font-size="13" fill="#0C447C" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="5xQvtsi44jdy7FKLVIFtHL">④ 编排层 · 调度</text>
+<rect x="650" y="108" width="34" height="2.5" rx="1.25" fill="#185FA5" data-page-node-id="pKcx2FXe3eSP8Ovl65sXYj"/>
+<text x="890" y="96" font-size="13" fill="#085041" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="HKOHNu5OmVdfZShL5p4SO1">⑤ A2A Agent 层</text>
+<rect x="890" y="108" width="34" height="2.5" rx="1.25" fill="#0F6E56" data-page-node-id="HGDcKAbkQDBr59ZBevYQmx"/>
+<text x="1180" y="96" font-size="13" fill="#3C3489" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="82vbRpozjTl6R3njNay7pT">⑥ MCP 工具层</text>
+<rect x="1180" y="108" width="34" height="2.5" rx="1.25" fill="#534AB7" data-page-node-id="BOBRb8dUkbar4TWNFrQ7kl"/>
+<text x="1450" y="96" font-size="13" fill="#27500A" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="lLplOEckVQGKb0TG44gAiD">⑦ 聚合与生成</text>
+<rect x="1450" y="108" width="34" height="2.5" rx="1.25" fill="#639922" data-page-node-id="NQR4JRapQGrOc00d4J8YqA"/>
+<path d="M1020 176 L1020 140 L1560 140 L1560 292" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="SEj7R6BZ1DBe3QD8DMV7Jm" />
+<text x="1060" y="140" font-size="11.5" fill="#0F6E56" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="sKIBT0hESqqjPJZnOncfXp">各 Agent 返回 findings / metrics / data</text>
+<rect x="30" y="166" width="150" height="72" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="agt9mtUzxvH0qbg0haDUpS"/>
+<text x="105" y="193" font-size="13.5" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="WifkRvt3dnCsPzJngeRvEH">用户提问</text>
+<text x="105" y="211" font-size="11.5" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="5LLGiZBUVoNW8RYYykHYot">中文一句话</text>
+<path d="M180 202 L205 202" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="cNPWJfuhXrONZKEAMYxJm3" />
+<rect x="210" y="176" width="170" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="J9SlW4cA6otiAthf91aYEy"/>
+<text x="295" y="193" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="wlS5GcbR8jzt7eChTT77VJ">JWT 鉴权</text>
+<text x="295" y="211" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="Tm47qTCPyWC6Ru1cn5p8aR">HS256 · 三角色</text>
+<rect x="210" y="242" width="170" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="iOZSBf62nQus9BlvSzAfkt"/>
+<text x="295" y="259" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="jsrCNHFWqEE4ijQZoRnjEV">Redis 限流</text>
+<text x="295" y="277" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="r5U9IpDIlAtcYi4U3lgLXg">IP+路径 固定窗口</text>
+<path d="M295 228 L295 239" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="9oZ396VcLTwuidbgepFrkA" />
+<rect x="210" y="308" width="170" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="8jyPUBGhllxx9Mp1T4gTJc"/>
+<text x="295" y="325" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="Tc5dApHKGRTLi93LA5G4GL">问答缓存</text>
+<text x="295" y="343" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="suefry0d5VBuHNFhDm0or6">命中则直接返回</text>
+<path d="M295 294 L295 305" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="nGbYIQMCHUTHtbEfX8DM1q" />
+<rect x="210" y="374" width="170" height="52" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="aA5JaWcqJnFYN24aj8UAkC"/>
+<text x="295" y="391" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="BD6qvNCIIX6uJDPoHQYEvp">会话落库</text>
+<text x="295" y="409" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="jB3BvkiEBlv05TiDsHwFoY">MySQL + Redis</text>
+<path d="M295 360 L295 371" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="478Byxvu2zGvj8HLJG1G7a" />
+<path d="M380 400 L395 400 L395 208 L405 208" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="yv0c3Iv6V5hsbFP9BmRQ74" />
+<text x="300" y="545" font-size="11" fill="#5F5E5A" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="iIgaleBbxbytXmkES0QoRB">鉴权 → 限流 → 缓存 → 会话，顺序即文档 §7 第 1 步</text>
+<rect x="410" y="176" width="210" height="64" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="wzDxlmZKizhX4mb9OeQFHd"/>
+<text x="515" y="199" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="9HtqK8sx29TGPg8ySM7vtt">intent_node</text>
+<text x="515" y="217" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="E2Fte2J88au3zTE16wzLLt">意图识别 · BERT + 规则双通道</text>
+<path d="M515 240 L515 258" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="4bR0JEaRjQ8xoNlubYz9fn" />
+<rect x="410" y="262" width="210" height="64" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="D1d2XmRk6I1jPY5Hu4jT8f"/>
+<text x="515" y="285" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="SG4K9iMd7wfvZghEKWGV4s">slot_node</text>
+<text x="515" y="303" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="3uATR3sOFQWGSr5BFqtxkq">槽位抽取 · 全规则，不调 LLM</text>
+<path d="M515 326 L515 356" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="c93uYDku95pQGBMiHqAIgt" />
+<polygon points="515,360 620,404 515,448 410,404" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" data-page-node-id="JFAxIod2C74U7jUCYnFCUg"/>
+<text x="515" y="396" font-size="12.5" fill="#633806" text-anchor="middle" font-weight="500" dominant-baseline="central" data-page-node-id="yAcVGxgumtSHmlIN55whaS">route_after_slot</text>
+<text x="515" y="414" font-size="11" fill="#854F0B" text-anchor="middle" font-weight="400" dominant-baseline="central" data-page-node-id="vA2ZRcektWdSQAuGhBFu2D">三分支判断</text>
+<path d="M515 448 L515 496" fill="none" stroke="#BA7517" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="3HsaxfumvteLMtBQn7NWtY" />
+<text x="527" y="472" font-size="11" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="SpKmlEa3nfxFKwh6oknCMK">缺槽位 / 闲聊</text>
+<rect x="410" y="500" width="210" height="64" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" data-page-node-id="Gl61CGuzCZigUbbpjVZWJT"/>
+<text x="515" y="523" font-size="13" font-weight="500" fill="#633806" text-anchor="middle" dominant-baseline="central" data-page-node-id="dea0SS6LUJfdm3DVwycLNB">answer_node</text>
+<text x="515" y="541" font-size="11.5" fill="#854F0B" text-anchor="middle" dominant-baseline="central" data-page-node-id="ZiQRZAcmCYcG7lB5uCwWQc">追问 / 寒暄直答</text>
+<path d="M620 404 L645 404" fill="none" stroke="#BA7517" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="RnegkaYw9CF4PFymWKyCoP" />
+<text x="632" y="388" font-size="11" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="opFM5DdkG5kcL8OAkzPtHO">槽位齐</text>
+<rect x="650" y="372" width="210" height="64" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="1LlODQKD0iwYoO6bKwaDjZ"/>
+<text x="755" y="395" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="DU6CUs73dXaH6CY1cEov6Z">planning_node</text>
+<text x="755" y="413" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="x4cSmCjYrqdH1JhSiA5n17">任务规划 · 去重收敛</text>
+<path d="M755 372 L755 164 L1020 164 L1020 172" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="0eZ4yjStq0s9rWeBSHudiJ" />
+<text x="770" y="176" font-size="11" fill="#185FA5" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="upnUe5FpdWFoFjdVUIUw8G">派发计划（含 focus / role）</text>
+<rect x="890" y="176" width="260" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="1jz66taqP8EJkKKxFujpCH"/>
+<text x="1020" y="195" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="t3qi37RBRct1dpPxo8OfFr">a2a_route_node</text>
+<text x="1020" y="213" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="u1dCBQnBK0KlnMSBmaZ2QF">asyncio.gather 并行派发 + 超时熔断</text>
+<path d="M890 232 L868 232 L868 570" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="MHtX97ClRHo7WDpNfjxWe0" />
+<path d="M868 282 L886 282" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="87vn8dHdDApEzKPBWMAQtH" />
+<rect x="890" y="252" width="260" height="60" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="cJVvtSV25HwRsC9K5Pi5rV"/>
+<text x="1020" y="273" font-size="12.5" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central" data-page-node-id="hXjOHi1dZ0HcL9BsWBL1hl">order_analysis_agent</text>
+<text x="1020" y="291" font-size="11.5" fill="#0F6E56" text-anchor="middle" dominant-baseline="central" data-page-node-id="rIheCiIU3roV0C24zeNlu3">订单 / 退货率 · 销售统计</text>
+<path d="M868 354 L886 354" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="pLYCJzNOCAh67JsTBchDXW" />
+<rect x="890" y="324" width="260" height="60" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="zGcoUufLbHKVUFK9P94y1J"/>
+<text x="1020" y="345" font-size="12.5" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central" data-page-node-id="0DcOb6eFbwLPERUQjFV3JR">product_analysis_agent</text>
+<text x="1020" y="363" font-size="11.5" fill="#0F6E56" text-anchor="middle" dominant-baseline="central" data-page-node-id="gmLngZL5hC0iJKfHHBWgTs">商品 / 库存预警</text>
+<path d="M868 426 L886 426" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="HZS2ZcrijlUo8KBGbBhtNU" />
+<rect x="890" y="396" width="260" height="60" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="I05fgDuagQZcDcRMa1Szgt"/>
+<text x="1020" y="417" font-size="12.5" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central" data-page-node-id="xx4U90hX5IdvfTiz3zhqXH">after_sales_agent</text>
+<text x="1020" y="435" font-size="11.5" fill="#0F6E56" text-anchor="middle" dominant-baseline="central" data-page-node-id="WCxfn9KKBNV3wDMPWsn4PP">售后 / 退款进度 · 工单</text>
+<path d="M868 498 L886 498" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="HkluJJcQBnQDM57Yz7ZGJJ" />
+<rect x="890" y="468" width="260" height="60" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="6SHIRcjryNHkf4YjJsIa0C"/>
+<text x="1020" y="489" font-size="12.5" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central" data-page-node-id="H81lEYAQKOZFpXL3gFZiKI">knowledge_rag_agent</text>
+<text x="1020" y="507" font-size="11.5" fill="#0F6E56" text-anchor="middle" dominant-baseline="central" data-page-node-id="EoUrWjEpPWXCSHHeO4QHoL">知识问答 · 带来源引用</text>
+<path d="M868 570 L886 570" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="7KkE6n6dCG5tBuGzNgVGro" />
+<rect x="890" y="540" width="260" height="60" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" data-page-node-id="JdY78NCs7AiyRNzeDw1WnH"/>
+<text x="1020" y="561" font-size="12.5" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central" data-page-node-id="HsiaPBbxSsIGgW73crbnVq">report_agent</text>
+<text x="1020" y="579" font-size="11.5" fill="#0F6E56" text-anchor="middle" dominant-baseline="central" data-page-node-id="a0LxIPT29TxwOAGIaRsXZZ">报表生成 / 导出</text>
+<rect x="1180" y="176" width="240" height="424" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5" data-page-node-id="i3cADFbzEdvuqdfWVkTjrY"/>
+<text x="1198" y="199" font-size="13.5" font-weight="500" fill="#3C3489" dominant-baseline="central" data-page-node-id="tDuAtD4ieuTV9gLHsEgeHC">MCP 工具层</text>
+<text x="1288" y="199" font-size="11.5" fill="#534AB7" dominant-baseline="central" data-page-node-id="ToMzWG3FoCoXMApt136fOT">8 个工具 · 统一护栏</text>
+<text x="1206" y="248" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="vco5du9A5LFad6rht9g7EW">· query_orders</text>
+<text x="1206" y="288" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="EXYjjfB5OXmRxj3aG3iKK1">· query_products</text>
+<text x="1206" y="328" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="wGyvwVcmiUaveL9ZvCebQX">· query_after_sales</text>
+<text x="1206" y="368" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="FJVCPcV78LC67vSg5SGHXS">· query_inventory</text>
+<text x="1206" y="408" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="7Ygf4cAr6tvz6N2kLWKFJJ">· query_ad_reports</text>
+<text x="1206" y="448" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="9mbNJrrUBLN1ZNisBQrWtA">· search_knowledge</text>
+<text x="1206" y="488" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="TFmpCYSSD9Ns5YaexFAD8y">· generate_report</text>
+<text x="1206" y="528" font-size="11.5" fill="#3C3489" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="jwbpTyTKUP3tk8fiiHXuUg">· create_ticket</text>
+<path d="M1150 282 L1176 282" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="dgKIpD1uqrsuMeCC3wCJs4" />
+<path d="M1150 354 L1176 354" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="Giy6l22x1kCH0HCjyOTc8C" />
+<path d="M1150 426 L1176 426" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="JcHk3MkVYcxvJlrjUk1k26" />
+<path d="M1150 498 L1176 498" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="z3nVHpGze0UuNU8VA0rRmK" />
+<path d="M1150 570 L1176 570" fill="none" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="zzUr2sD7weWSTv9REQaKUs" />
+<text x="1200" y="576" font-size="11" fill="#534AB7" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="54M1qajOExGn2WiAo5dqms">参数校验 · 超时重试</text>
+<text x="1200" y="594" font-size="11" fill="#534AB7" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="Fo3QD1U1GcDaNNAOL526wj">写门禁 · 审计双写</text>
+<rect x="1450" y="300" width="220" height="64" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" data-page-node-id="Hy951gzfHAaKmZXBSiF9TV"/>
+<text x="1560" y="323" font-size="12.5" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central" data-page-node-id="XDIDqPEWbym33IbyprBkjM">aggregate_node</text>
+<text x="1560" y="341" font-size="11.5" fill="#185FA5" text-anchor="middle" dominant-baseline="central" data-page-node-id="zNKnEQjSlZVHD14dQabxBs">按优先级排序 · 生成表格</text>
+<path d="M1560 364 L1560 400" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="o1AIYwIaigEVbSA4diNQY5" />
+<rect x="1450" y="404" width="220" height="64" rx="8" fill="#EAF3DE" stroke="#639922" stroke-width="0.5" data-page-node-id="tqglgiO5WtSzaN8cGefrnZ"/>
+<text x="1560" y="427" font-size="12.5" font-weight="500" fill="#27500A" text-anchor="middle" dominant-baseline="central" data-page-node-id="utLiBPrVdavSLOLO6UaEB4">answer_node</text>
+<text x="1560" y="445" font-size="11.5" fill="#3B6D11" text-anchor="middle" dominant-baseline="central" data-page-node-id="zUDGuEKQE9ZCNZUJraX2rk">LLM 改写为结论</text>
+<rect x="1170" y="660" width="500" height="104" rx="12" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="FbSZTXiMtNewSJDtAFdoLW"/>
+<text x="1188" y="683" font-size="13.5" font-weight="500" fill="#2C2C2A" dominant-baseline="central" data-page-node-id="roe2nENnnJM28gODOn0C4h">数据层</text>
+<text x="1230" y="683" font-size="11.5" fill="#5F5E5A" dominant-baseline="central" data-page-node-id="NNz07neYrdoYVuRj1EWxzh">被 MCP 工具访问</text>
+<rect x="1190" y="700" width="150" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="9dGsxwg278t4adDB4kNatk"/>
+<text x="1265" y="716" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="8unLqFEgOGpzKMoLBd5ggx">MySQL</text>
+<text x="1265" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="H7uGWueWObnzGwxWSlqbWV">业务 + 审计</text>
+<rect x="1350" y="700" width="150" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="LwWkHmmVR5wAh0GxKXhKDp"/>
+<text x="1425" y="716" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="HzPlznIwEMldKfnys9P3lh">Redis</text>
+<text x="1425" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="tsNq6ULqq74TDoZGyaVC6j">会话 / 缓存 / 限流</text>
+<rect x="1510" y="700" width="150" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="zuYNulxIFMzV45qohHDGEc"/>
+<text x="1585" y="716" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="4NymqCg4qIFby2GjQBQ2rL">Milvus</text>
+<text x="1585" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="hJfSqc3XCXGjKCtlStEd1R">向量检索</text>
+<path d="M1300 600 L1300 656" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="BDoAsEYUEOeRY0Culckkzr" />
+<rect x="650" y="660" width="490" height="104" rx="12" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="lAcmKZKABeLtP0eW9v9JMY"/>
+<text x="668" y="683" font-size="13.5" font-weight="500" fill="#2C2C2A" dominant-baseline="central" data-page-node-id="XvrmypQjWa4KF1SAypxndy">模型层</text>
+<text x="710" y="683" font-size="11.5" fill="#5F5E5A" dominant-baseline="central" data-page-node-id="XVS82eKoUVJTYIuOiJ8npZ">被编排与检索链调用</text>
+<rect x="670" y="700" width="108" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="0sx9w5NIy3GN9MfrcMnmxk"/>
+<text x="724" y="716" font-size="11.5" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="PyMRrhix7RRq71fVeVHTb7">qwen3.7-flash</text>
+<text x="724" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="FC2B1KLTaj4a3hxpZGnotp">回答生成</text>
+<rect x="788" y="700" width="108" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="vq6EjCFlqqcoiXk2dr2778"/>
+<text x="842" y="716" font-size="11.5" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="O4ZmnVK5DoqQrMaGUvWuGF">BERT</text>
+<text x="842" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="kfVxVHLLii1ADxaIz3zSIU">意图分类</text>
+<rect x="906" y="700" width="108" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="Co0fB492t9or8w86DRTz3k"/>
+<text x="960" y="716" font-size="11.5" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="5CvfAL8lWEDvDrnHsFCo2j">BGE-M3</text>
+<text x="960" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="qHMchi7GQr5N03uncUKAWj">稠密 + 稀疏</text>
+<rect x="1024" y="700" width="108" height="50" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5" data-page-node-id="j52vi0mS0cbGPhWQH1ghOL"/>
+<text x="1078" y="716" font-size="11.5" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central" data-page-node-id="7xx3Hko549ugeY7T0HzFda">Reranker</text>
+<text x="1078" y="734" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central" data-page-node-id="rLODJ8NVbOJpvTmvNBF1YL">精排</text>
+<path d="M1560 468 L1560 606 L724 606 L724 696" fill="none" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="WJJfdbBg2u5PWvcfGKuTdt" />
+<path d="M410 208 L396 208 L396 740 L646 740" fill="none" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="hRVZu0ZtQDsGULeqiHi9pA" />
+<text x="1330" y="592" font-size="11" fill="#3B6D11" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="vb1OqsoA7MpTIBeej5FfOt">生成调用</text>
+<text x="404" y="480" font-size="11" fill="#3B6D11" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="w0jwuhOznlwdQUc92tVfGf">意图分类</text>
+<path d="M1180 380 L1163 380 L1163 748 L1136 748" fill="none" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="MhAHzoVNQbW5tOukfXGvuD" />
+<text x="1166" y="300" font-size="11" fill="#3B6D11" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="yxfFzr9QBHqlD8dSmRgI53">检索链</text>
+<rect x="30" y="790" width="530" height="90" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" data-page-node-id="aM5J9hXbCqmCI4ju2LVgpA"/>
+<text x="48" y="814" font-size="12.5" fill="#633806" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="l1EzHKfhO5ErlOFDR4M7Ev">为什么 slot_node 不调大模型？</text>
+<text x="48" y="836" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="RGDSwds9YnljRYrtA8MsTE">槽位值域是封闭的（平台就那几个、指标就十来个），规则比模型更准、可回归测试、</text>
+<text x="48" y="856" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="3VQYHrMe6bHrXqvXcYqTyV">零 token 成本。</text>
+<rect x="600" y="790" width="540" height="90" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" data-page-node-id="0FxJnjZbkBDQadpG2qgkSc"/>
+<text x="618" y="814" font-size="12.5" fill="#633806" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="QwGyUUa5UEA19OUGDsNZk2">为什么退货率不在 SQL 里算？</text>
+<text x="618" y="836" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="eMgB6ukh1XnPQmHs7MEcKX">工具层只给原子数据：先取订单量、再取退货单数，由 Agent 内 join </text>
+<text x="618" y="856" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="mCKawKKsVZfqAgPdn45Phe">—— 业务口径集中一处，好改也好解释。</text>
+<rect x="1170" y="790" width="540" height="90" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="4 3" data-page-node-id="Xfy8APsKdbf7g4iEmLovGj"/>
+<text x="1188" y="814" font-size="12.5" fill="#633806" text-anchor="start" font-weight="500" dominant-baseline="central" data-page-node-id="rnUfuEhOWNw4pAk69VB9U6">为什么闲聊要单独短路？</text>
+<text x="1188" y="836" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="Vn7jajvk7EnHahJsMRbuQ1">闲聊没有对应 Agent，若进规划会被兜底规则当知识问答捞走，白跑一次向量检</text>
+<text x="1188" y="856" font-size="11.5" fill="#854F0B" text-anchor="start" font-weight="400" dominant-baseline="central" data-page-node-id="q6cp2sUAEf2UhNEOQ1GbGo">索，返回的还是不相干的政策。</text>
+</svg>
+</div></body></html>

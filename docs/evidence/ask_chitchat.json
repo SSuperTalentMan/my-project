@@ -1,0 +1,79 @@
+{
+  "answer": "你好！我是「商枢」电商智能经营分析平台助手。我可以帮你进行经营数据分析（如销售额、广告投产比等）、商品与库存管理、售后规则查询及报表导出。如果你需要查看具体业务数据，可以直接告诉我你想分析的内容。",
+  "session_id": "sess-53b23d37b4cf4b15",
+  "request_id": "1af5b8a99dc94dadb17527fc3e8fa614",
+  "answer_source": "chitchat",
+  "answer_meta": {
+    "smalltalk": "greeting",
+    "skip_retrieval": true,
+    "generator": "llm",
+    "model": "qwen3.7-flash",
+    "usage": {
+      "completion_tokens": 53,
+      "prompt_tokens": 221,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "text_tokens": 221
+      },
+      "total_tokens": 274
+    },
+    "llm_elapsed_ms": 1768
+  },
+  "cached": false,
+  "intent": {
+    "primary": "chitchat",
+    "primary_name": "闲聊寒暄",
+    "domain": "其他",
+    "confidence": 0.95,
+    "source": "rule",
+    "scores": {
+      "chitchat": 0.95
+    },
+    "hits": {
+      "chitchat": [
+        "你好",
+        "re:^(你好|您好|嗨|在吗)[!！。.~]*$"
+      ]
+    },
+    "matched": [
+      "chitchat"
+    ],
+    "agents": [],
+    "question": "你好"
+  },
+  "slots": {},
+  "missing_slots": [],
+  "defaults_applied": [],
+  "plan": [],
+  "plan_reason": "闲聊寒暄 → 直接回应（不调用 Agent、不检索知识库）",
+  "agent_tasks": [],
+  "table": null,
+  "findings": [],
+  "metrics": {},
+  "citations": [],
+  "sources": [],
+  "degraded": false,
+  "degrade_reasons": [],
+  "notes": [],
+  "errors": [],
+  "node_timings": {
+    "intent_node": 0,
+    "slot_node": 0,
+    "answer_node": 1769
+  },
+  "elapsed_ms": 1775,
+  "orchestrator_mode": "langgraph",
+  "trace": [
+    {
+      "stage": "llm",
+      "model": "qwen3.7-flash",
+      "elapsed_ms": 1768,
+      "attempt": 1
+    },
+    {
+      "stage": "answer",
+      "source": "chitchat",
+      "smalltalk": "greeting"
+    }
+  ]
+}

@@ -1,0 +1,300 @@
+{
+  "answer": "上个月抖店退货率最高的商品是「折叠晾衣架」，其退货率为 33.33%。\n\n2026年8月抖店整体退货率为 3.66%。按退货率降序排列，前5名商品明细如下：\n1. 折叠晾衣架（家居），订单量6，退货单数2，退货率 33.33%，退款金额 ¥311.21；\n2. 阳澄湖大闸蟹礼券（食品），订单量8，退货单数2，退货率 25.00%，退款金额 ¥2,734.86；\n3. 纯棉基础T恤（服饰），订单量7，退货单数1，退货率 14.29%，退款金额 ¥78.09；\n4. 智能马桶盖（家电），订单量7，退货单数1，退货率 14.29%，退款金额 ¥837.26；\n5. 低糖燕麦饼干（食品），订单量8，退货单数1，退货率 12.50%，退款金额 ¥35.66。\n\n这5个商品的退货率均显著高于整体均值（≥1.5倍），建议优先排查质量或描述不符问题。",
+  "session_id": "evidence-fixed",
+  "request_id": "4d26832cdf43445a825c2b678bd96550",
+  "answer_source": "llm",
+  "answer_meta": {
+    "model": "qwen3.7-flash",
+    "usage": {
+      "completion_tokens": 282,
+      "prompt_tokens": 941,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "text_tokens": 941
+      },
+      "total_tokens": 1223
+    },
+    "llm_elapsed_ms": 3378,
+    "generator": "llm"
+  },
+  "cached": false,
+  "intent": {
+    "primary": "after_sales",
+    "primary_name": "售后分析",
+    "domain": "经营分析",
+    "confidence": 0.8333,
+    "source": "rule",
+    "scores": {
+      "after_sales": 0.8333,
+      "product": 0.5,
+      "knowledge_qa": 0.3333
+    },
+    "hits": {
+      "after_sales": [
+        "退货率",
+        "退货",
+        "re:退货率|退款率|售后率|退款占比",
+        "re:退(货|款).*(最多|最高|排名|top)"
+      ],
+      "product": [
+        "商品"
+      ]
+    },
+    "matched": [
+      "after_sales",
+      "product"
+    ],
+    "agents": [
+      "after_sales_agent",
+      "product_analysis_agent"
+    ],
+    "question": "上个月抖店退货率最高的商品是什么"
+  },
+  "slots": {
+    "platform": "抖店",
+    "start_date": "2026-08-01",
+    "end_date": "2026-08-31",
+    "period_label": "2026年8月",
+    "metric": "退货率",
+    "top_k": 5,
+    "order": "desc",
+    "after_sale_type": "退货"
+  },
+  "missing_slots": [],
+  "defaults_applied": [],
+  "plan": [
+    {
+      "agent": "order_analysis_agent",
+      "intent": "after_sales",
+      "focus": "return_rate",
+      "role": "primary"
+    }
+  ],
+  "plan_reason": "售后分析 → order_analysis_agent；命中退货率排行口径 → 收敛为 order_analysis_agent(focus=return_rate)，避免仅因问句出现「商品」二字就并行调用无关 Agent 污染结论",
+  "agent_tasks": [
+    {
+      "id": "order_analysis_agent-db54135f17c0",
+      "agent": "order_analysis_agent",
+      "status": "completed",
+      "elapsed_ms": 165,
+      "error": null
+    }
+  ],
+  "table": {
+    "title": "order_analysis_agent · return_rate",
+    "kind": "return_rate",
+    "columns": [
+      {
+        "key": "product_name",
+        "label": "商品"
+      },
+      {
+        "key": "category",
+        "label": "类目"
+      },
+      {
+        "key": "platform",
+        "label": "平台"
+      },
+      {
+        "key": "order_count",
+        "label": "订单量"
+      },
+      {
+        "key": "return_count",
+        "label": "退货单数"
+      },
+      {
+        "key": "return_rate",
+        "label": "退货率(%)"
+      },
+      {
+        "key": "refund_amount",
+        "label": "退款金额"
+      }
+    ],
+    "rows": [
+      {
+        "product_name": "折叠晾衣架",
+        "category": "家居",
+        "platform": "抖店",
+        "order_count": 6,
+        "return_count": 2,
+        "return_rate": 33.33,
+        "refund_amount": 311.21
+      },
+      {
+        "product_name": "阳澄湖大闸蟹礼券",
+        "category": "食品",
+        "platform": "抖店",
+        "order_count": 8,
+        "return_count": 2,
+        "return_rate": 25.0,
+        "refund_amount": 2734.86
+      },
+      {
+        "product_name": "纯棉基础T恤",
+        "category": "服饰",
+        "platform": "抖店",
+        "order_count": 7,
+        "return_count": 1,
+        "return_rate": 14.29,
+        "refund_amount": 78.09
+      },
+      {
+        "product_name": "智能马桶盖",
+        "category": "家电",
+        "platform": "抖店",
+        "order_count": 7,
+        "return_count": 1,
+        "return_rate": 14.29,
+        "refund_amount": 837.26
+      },
+      {
+        "product_name": "低糖燕麦饼干",
+        "category": "食品",
+        "platform": "抖店",
+        "order_count": 8,
+        "return_count": 1,
+        "return_rate": 12.5,
+        "refund_amount": 35.66
+      }
+    ],
+    "row_count": 5,
+    "truncated": false
+  },
+  "findings": [
+    "2026年8月 抖店整体退货率为 3.66%（退货单数 ÷ 订单数，口径为「退货」类售后）。",
+    "退货率最高的商品是「折叠晾衣架」（33.33%，2 单退货 / 6 单成交）。",
+    "其后依次为：阳澄湖大闸蟹礼券（25.0%）、纯棉基础T恤（14.29%）、智能马桶盖（14.29%）、低糖燕麦饼干（12.5%）。",
+    "其中 5 个商品退货率显著高于整体均值（≥1.5 倍），建议优先排查质量或描述不符问题。",
+    "（排行已过滤成交少于 5 单的商品，避免小样本比率失真。）"
+  ],
+  "metrics": {
+    "order_overall_return_rate": 3.66,
+    "order_order_count": 382,
+    "order_return_count": 14,
+    "order_product_count": 32,
+    "order_min_orders": 5,
+    "order_top_product": "折叠晾衣架",
+    "order_top_return_rate": 33.33
+  },
+  "citations": [],
+  "sources": [
+    {
+      "agent": "order_analysis_agent",
+      "kind": "return_rate",
+      "row_count": 5,
+      "source_tools": [
+        "query_orders",
+        "query_after_sales"
+      ],
+      "saved_path": null,
+      "summary": {
+        "overall_return_rate": 3.66,
+        "order_count": 382,
+        "return_count": 14,
+        "product_count": 32,
+        "min_orders": 5,
+        "top_product": "折叠晾衣架",
+        "top_return_rate": 33.33
+      }
+    }
+  ],
+  "degraded": false,
+  "degrade_reasons": [],
+  "notes": [],
+  "errors": [],
+  "node_timings": {
+    "intent_node": 0,
+    "slot_node": 2,
+    "planning_node": 0,
+    "a2a_route_node": 168,
+    "aggregate_node": 0,
+    "answer_node": 3378
+  },
+  "elapsed_ms": 3570,
+  "orchestrator_mode": "langgraph",
+  "trace": [
+    {
+      "stage": "intent",
+      "primary": "after_sales",
+      "confidence": 0.833,
+      "source": "rule"
+    },
+    {
+      "stage": "node",
+      "node": "intent_node",
+      "elapsed_ms": 0
+    },
+    {
+      "stage": "node",
+      "node": "slot_node",
+      "elapsed_ms": 2
+    },
+    {
+      "stage": "plan",
+      "agents": [
+        "order_analysis_agent"
+      ]
+    },
+    {
+      "stage": "node",
+      "node": "planning_node",
+      "elapsed_ms": 0
+    },
+    {
+      "stage": "a2a-dispatch",
+      "agent": "order_analysis_agent"
+    },
+    {
+      "stage": "agent-tool",
+      "agent": "order_analysis_agent",
+      "tool": "query_orders"
+    },
+    {
+      "stage": "mcp",
+      "tool": "query_orders",
+      "elapsed_ms": 13,
+      "attempt": 1
+    },
+    {
+      "stage": "agent-tool",
+      "agent": "order_analysis_agent",
+      "tool": "query_after_sales"
+    },
+    {
+      "stage": "mcp",
+      "tool": "query_after_sales",
+      "elapsed_ms": 7,
+      "attempt": 1
+    },
+    {
+      "stage": "a2a",
+      "agent": "order_analysis_agent",
+      "status": "completed",
+      "elapsed_ms": 165
+    },
+    {
+      "stage": "node",
+      "node": "a2a_route_node",
+      "elapsed_ms": 168
+    },
+    {
+      "stage": "node",
+      "node": "aggregate_node",
+      "elapsed_ms": 0
+    },
+    {
+      "stage": "llm",
+      "model": "qwen3.7-flash",
+      "elapsed_ms": 3378,
+      "attempt": 1
+    },
+    {
+      "stage": "node",
+      "node": "answer_node",
+      "elapsed_ms": 3378
+    }
+  ]
+}

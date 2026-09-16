@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>PENDING</title>
+<style>body{margin:0;font:13px monospace}iframe{border:0;width:1440px;height:1100px}</style>
+</head>
+<body>
+<iframe id="f" src="/"></iframe>
+<script type="module">
+// UI 端到端驱动页（无头取证用）。
+//
+// 用同源 iframe 打开控制台，真实点击示例问题，把结果写进 document.title，
+// 再用 Chrome 的 --dump-dom 读出来。它覆盖的是 SSR 证明不了的那一环：
+// **事件处理器接线** —— 渲染正常，不代表点击有反应。
+//
+// 前提：Vite dev server 在运行。然后用 Chrome 无头模式跑：
+//   chrome --headless --virtual-time-budget=60000 --dump-dom \
+//          http://127.0.0.1:5173/verify-ui.html | grep -o "<title>[^<]*</title>"
+// 结束时标题会变成一行 `RESULT ...`（或 FAIL / ERROR 开头）。
+//
+// 注意：SSE 是长连接，在 virtual-time 下永不结束，所以这里会先取消勾选
+// 「流式 SSE」再发送；SSE 那条路径由 verify-sse.mjs 对真实后端覆盖。
+const f = document.getElementById('f')
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+const done = (msg) => { document.title = msg }
+
+function badges(d) {
+  return [...d.querySelectorAll('.badge')].map((b) => b.textContent.trim())
+}
+
+f.addEventListener('load', async () => {
+  const d = f.contentDocument
+  try {
+    // 1. 等 Vue 挂载
+    for (let i = 0; i < 60 && !d.querySelector('.topbar__title'); i++) await sleep(150)
+    if (!d.querySelector('.topbar__title')) return done('FAIL: 页面未挂载')
+
+    // 2. 等自动签发 JWT（顶栏出现「已签发」）
+    let signed = false
+    for (let i = 0; i < 60; i++) {
+      signed = badges(d).some((t) => t.includes('已签发'))
+      if (signed) break
+      await sleep(150)
+    }
+
+    // 3. 切到「非流式」再点发送。
+    //    SSE 是长连接，在 --virtual-time-budget 下永不结束，取证环境里跑不完；
+    //    一次性请求能完整跑完，且覆盖的渲染路径完全相同（applyPayload → 同一套模板）。
+    //    SSE 那条路径已由 verify-sse.mjs 对真实后端单独覆盖。
+    const cb = d.querySelector('.switch input[type="checkbox"]')
+    if (cb && cb.checked) {
+      cb.click()
+      await sleep(300)
+    }
+
+    // 4. 真实点击示例问题
+    const btn = [...d.querySelectorAll('button')].find((b) => b.textContent.includes('各平台的销售额'))
+    if (!btn) return done('FAIL: 未找到示例问题按钮')
+    btn.click()
+
+    // 4. 等回答产出（SSE 流式，约 4s）
+    let answer = ''
+    for (let i = 0; i < 80; i++) {
+      await sleep(400)
+      answer = d.querySelector('.answer__text')?.textContent || ''
+      if (answer.length > 80) break
+    }
+
+    const rows = d.querySelectorAll('.dtable tbody tr').length
+    const cols = d.querySelectorAll('.dtable thead th').length
+    const cardBadges = [...d.querySelectorAll('.card__head .badge')].map((b) => b.textContent.trim()).join('/')
+    const findings = d.querySelectorAll('.findings li').length
+
+    // 5. 右侧「事件流水」是否被实时追加
+    const evTab = [...d.querySelectorAll('.tab')].find((t) => t.textContent.includes('事件流水'))
+    evTab?.click()
+    await sleep(400)
+    const steps = d.querySelectorAll('.trace__step').length
+
+    // 6.「MCP 工具」页签能否加载出 8 个工具
+    const toolTab = [...d.querySelectorAll('.tab')].find((t) => t.textContent.includes('MCP 工具'))
+    toolTab?.click()
+    let toolCount = 0
+    for (let i = 0; i < 40; i++) {
+      await sleep(300)
+      toolCount = d.querySelectorAll('.tool').length
+      if (toolCount > 0) break
+    }
+
+    done(
+      'RESULT'
+      + ` signed=${signed}`
+      + ` answerLen=${answer.length}`
+      + ` tableRows=${rows} tableCols=${cols}`
+      + ` findings=${findings}`
+      + ` badges=${cardBadges}`
+      + ` eventSteps=${steps}`
+      + ` tools=${toolCount}`,
+    )
+  } catch (e) {
+    done('ERROR: ' + (e && e.message ? e.message : e))
+  }
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+{
+  "answer": "2026年8月各平台销售额分别为：抖店 ¥107,642.27、淘宝 ¥97,942.18、京东 ¥106,787.45、拼多多 ¥44,449.08、天猫 ¥80,877.79。\n\n具体明细如下：\n1. 抖店：订单量 396 单，GMV ¥107,642.27。\n2. 淘宝：订单量 341 单，GMV ¥97,942.18。\n3. 京东：订单量 276 单，GMV ¥106,787.45。\n4. 拼多多：订单量 202 单，GMV ¥44,449.08。\n5. 天猫：订单量 185 单，GMV ¥80,877.79。\n\n全平台共成交 1400 单，总 GMV 为 ¥437,698.77。",
+  "session_id": "sess-0b1a4dd6b4e0432d",
+  "request_id": "cd01f2659fe44cf49215dc08f3d65662",
+  "answer_source": "llm",
+  "answer_meta": {
+    "model": "qwen3.7-flash",
+    "usage": {
+      "completion_tokens": 253,
+      "prompt_tokens": 729,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "text_tokens": 729
+      },
+      "total_tokens": 982
+    },
+    "llm_elapsed_ms": 3242,
+    "generator": "llm"
+  },
+  "cached": false,
+  "intent": {
+    "primary": "sales",
+    "primary_name": "销售分析",
+    "domain": "经营分析",
+    "confidence": 0.6923,
+    "source": "rule",
+    "scores": {
+      "sales": 0.6923
+    },
+    "hits": {
+      "sales": [
+        "销售额",
+        "re:(销售|成交|营业)额?"
+      ]
+    },
+    "matched": [
+      "sales"
+    ],
+    "agents": [
+      "order_analysis_agent"
+    ],
+    "question": "上个月各平台的销售额分别是多少"
+  },
+  "slots": {
+    "start_date": "2026-08-01",
+    "end_date": "2026-08-31",
+    "period_label": "2026年8月",
+    "metric": "销售额",
+    "breakdowns": [
+      "platform"
+    ]
+  },
+  "missing_slots": [],
+  "defaults_applied": [],
+  "plan": [
+    {
+      "agent": "order_analysis_agent",
+      "intent": "sales",
+      "focus": "orders",
+      "role": "primary"
+    }
+  ],
+  "plan_reason": "销售分析 → order_analysis_agent",
+  "agent_tasks": [
+    {
+      "id": "order_analysis_agent-2290b23b091f",
+      "agent": "order_analysis_agent",
+      "status": "completed",
+      "elapsed_ms": 56,
+      "error": null
+    }
+  ],
+  "table": {
+    "title": "order_analysis_agent · breakdown_platform",
+    "kind": "breakdown_platform",
+    "columns": [
+      {
+        "key": "platform",
+        "label": "平台"
+      },
+      {
+        "key": "order_count",
+        "label": "订单量"
+      },
+      {
+        "key": "gmv",
+        "label": "GMV"
+      },
+      {
+        "key": "buyer_count",
+        "label": "买家数"
+      }
+    ],
+    "rows": [
+      {
+        "platform": "抖店",
+        "order_count": 396,
+        "gmv": 107642.27,
+        "buyer_count": 396
+      },
+      {
+        "platform": "淘宝",
+        "order_count": 341,
+        "gmv": 97942.18,
+        "buyer_count": 341
+      },
+      {
+        "platform": "京东",
+        "order_count": 276,
+        "gmv": 106787.45,
+        "buyer_count": 276
+      },
+      {
+        "platform": "拼多多",
+        "order_count": 202,
+        "gmv": 44449.08,
+        "buyer_count": 202
+      },
+      {
+        "platform": "天猫",
+        "order_count": 185,
+        "gmv": 80877.79,
+        "buyer_count": 185
+      }
+    ],
+    "row_count": 5,
+    "truncated": false
+  },
+  "findings": [
+    "2026-08-01~2026-08-31 全平台共成交 1400 单，GMV ¥437,698.77，客单价 ¥312.64，买家数 1391。",
+    "订单状态分布：已完成 830 单、已发货 228 单、已付款 161 单、已退款 113 单、已取消 68 单。",
+    "平台 GMV 分布：抖店 396 单 / ¥107,642.27、淘宝 341 单 / ¥97,942.18、京东 276 单 / ¥106,787.45、拼多多 202 单 / ¥44,449.08、天猫 185 单 / ¥80,877.79。"
+  ],
+  "metrics": {
+    "order_label": "2026-08-01~2026-08-31",
+    "order_order_count": 1400,
+    "order_gmv": 437698.77,
+    "order_avg_order_amount": 312.64,
+    "order_buyer_count": 1391
+  },
+  "citations": [],
+  "sources": [
+    {
+      "agent": "order_analysis_agent",
+      "kind": "breakdown_platform",
+      "row_count": 5,
+      "source_tools": [
+        "query_orders"
+      ],
+      "saved_path": null,
+      "summary": {
+        "label": "2026-08-01~2026-08-31",
+        "order_count": 1400,
+        "gmv": 437698.77,
+        "avg_order_amount": 312.64,
+        "buyer_count": 1391,
+        "by_status": [
+          {
+            "status": "已完成",
+            "cnt": 830,
+            "gmv": 253022.8
+          },
+          {
+            "status": "已发货",
+            "cnt": 228,
+            "gmv": 78408.59
+          },
+          {
+            "status": "已付款",
+            "cnt": 161,
+            "gmv": 51561.14
+          },
+          {
+            "status": "已退款",
+            "cnt": 113,
+            "gmv": 35293.92
+          },
+          {
+            "status": "已取消",
+            "cnt": 68,
+            "gmv": 19412.32
+          }
+        ],
+        "by_platform": [
+          {
+            "platform": "抖店",
+            "order_count": 396,
+            "gmv": 107642.27,
+            "buyer_count": 396,
+            "cnt": 396
+          },
+          {
+            "platform": "淘宝",
+            "order_count": 341,
+            "gmv": 97942.18,
+            "buyer_count": 341,
+            "cnt": 341
+          },
+          {
+            "platform": "京东",
+            "order_count": 276,
+            "gmv": 106787.45,
+            "buyer_count": 276,
+            "cnt": 276
+          },
+          {
+            "platform": "拼多多",
+            "order_count": 202,
+            "gmv": 44449.08,
+            "buyer_count": 202,
+            "cnt": 202
+          },
+          {
+            "platform": "天猫",
+            "order_count": 185,
+            "gmv": 80877.79,
+            "buyer_count": 185,
+            "cnt": 185
+          }
+        ],
+        "by_product": []
+      }
+    }
+  ],
+  "degraded": false,
+  "degrade_reasons": [],
+  "notes": [],
+  "errors": [],
+  "node_timings": {
+    "intent_node": 0,
+    "slot_node": 0,
+    "planning_node": 0,
+    "a2a_route_node": 58,
+    "aggregate_node": 0,
+    "answer_node": 3242
+  },
+  "elapsed_ms": 3308,
+  "orchestrator_mode": "langgraph",
+  "trace": [
+    {
+      "stage": "llm",
+      "model": "qwen3.7-flash",
+      "elapsed_ms": 3242,
+      "attempt": 1
+    },
+    {
+      "stage": "node",
+      "node": "answer_node",
+      "elapsed_ms": 3242
+    }
+  ]
+}
